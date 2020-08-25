@@ -4,7 +4,7 @@ pd.set_option('max_columns',None)
 import seaborn as sns
 from sklearn.impute import SimpleImputer
 import xgboost as xgb
-from xgboost import XGBClassifier
+from sklearn.preprocessing import normalize
 
 train = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\training.csv')
 test = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\test.csv')
@@ -12,16 +12,16 @@ sample_submission = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data
 
 y = train.Label
 train = train.drop(['Label', 'Weight'], axis = 1)
-#train = train.drop('Weight', axis = 1)
-
-train_cols, test_cols = train.columns, test.columns
 
 
 X = train
 del train
 
-X.set_index('EventId', inplace = True)
-test.set_index('EventId', inplace = True)
+sns.set(style="darkgrid")
+ax = sns.barplot(x = y.value_counts().index, y = y.value_counts())
+
+
+X_cols, test_cols = X.columns, test.columns
 
 X = X.replace(-999.000,np.nan)
 test = test.replace(-999.000,np.nan)
@@ -32,12 +32,14 @@ X = pd.DataFrame(imp.transform(X))
 
 imp.fit(test)
 test = pd.DataFrame(imp.transform(test))
+X.columns, test.columns = X_cols, test_cols
 
-X.columns = train_cols
-test.columns = test_cols
+X.EventId = X.EventId.astype('int32')
+test.EventId = test.EventId.astype('int32')
 
-sns.set(style="darkgrid")
-ax = sns.barplot(x = y.value_counts().index, y = y.value_counts())
+X.set_index('EventId', inplace = True)
+test.set_index('EventId', inplace = True)
+
 
 clf = xgb.XGBClassifier(
     n_estimators=500,
