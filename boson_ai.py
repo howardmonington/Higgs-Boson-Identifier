@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 pd.set_option('max_columns',None)
-import tensorflow as tf
 import seaborn as sns
 from sklearn.impute import SimpleImputer
 import xgboost as xgb
@@ -12,14 +11,17 @@ test = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai compe
 sample_submission = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\random_submission.csv')
 
 y = train.Label
-train = train.drop('Label', axis = 1)
-train = train.drop('Weight', axis = 1)
+train = train.drop(['Label', 'Weight'], axis = 1)
+#train = train.drop('Weight', axis = 1)
 
-train_cols = train.columns
-test_cols = test.columns
+train_cols, test_cols = train.columns, test.columns
+
 
 X = train
 del train
+
+X.set_index('EventId', inplace = True)
+test.set_index('EventId', inplace = True)
 
 X = X.replace(-999.000,np.nan)
 test = test.replace(-999.000,np.nan)
@@ -50,4 +52,6 @@ clf = xgb.XGBClassifier(
 
 clf.fit(X, y)
 
-pred = clf.predict(test)
+pred = pd.DataFrame(clf.predict(test))
+
+
