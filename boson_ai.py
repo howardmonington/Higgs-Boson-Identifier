@@ -6,7 +6,7 @@ from sklearn.impute import SimpleImputer
 import xgboost as xgb
 from sklearn.preprocessing import normalize
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_absolute_error
+from sklearn.linear_model import LogisticRegression
 
 train = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\training.csv')
 test = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\test.csv')
@@ -63,5 +63,9 @@ for i in estimators_to_test:
     mae_list.append(xg_tester(i, X_train, X_test, y_train, y_test))
     print(f"n_estimators: {i}, mae: {mae_list[-1]}")
     
-
+lr = LogisticRegression()
+lr.fit(X_train, y_train)
+pred = lr.predict(X_test)
+mae = mean_absolute_error(y_test, pred)
+print(f"logistic regression, mae: {mae}")
 
