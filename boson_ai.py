@@ -49,20 +49,19 @@ test = pd.DataFrame(normalize(test))
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=2020)
 
+estimators_to_test = [50, 100, 150, 200]
 
-clf = xgb.XGBClassifier(
-    n_estimators=200,
-    max_depth=9,
-    learning_rate=0.05,
-    subsample=0.9,
-    colsample_bytree=0.9,
-    missing=-999,
-    random_state=2019,
-    tree_method='gpu_hist'  # THE MAGICAL PARAMETER
-)
+def xg_tester(estimators_to_test, X_train, X_test, y_train, y_test):
+    clf = xgb.XGBClassifier(n_estimators = estimators_to_test, random_state = 2020)
+    clf.fit(X_train, y_train)
+    pred = clf.predict(X_test)
+    mae = mean_absolute_error(y_test, pred)
+    return(mae)
 
-clf.fit(X_train, y_train)
-pred = pd.DataFrame(clf.predict(X_test))
-print(mean_absolute_error(y_test, pred))
+mae_list = list()
+for i in estimators_to_test:
+    mae_list.append(xg_tester(i, X_train, X_test, y_train, y_test))
+    print(f"n_estimators: {i}, mae: {mae_list[-1]}")
+    
 
 
