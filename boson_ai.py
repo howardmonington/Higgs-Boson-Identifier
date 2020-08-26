@@ -8,6 +8,9 @@ from sklearn.preprocessing import normalize
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import mean_absolute_error
+import eli5
+from eli5.sklearn import PermutationImportance
 
 train = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\training.csv')
 test = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\test.csv')
@@ -62,6 +65,19 @@ def xg_tester(estimators_to_test, X_train, X_test, y_train, y_test):
 
 for i in estimators_to_test:
     print(f"n_estimators: {i}, mae: {xg_tester(i, X_train, X_test, y_train, y_test)}")
+    
+
+X_list = X_test.columns.tolist()
+
+clf = xgb.XGBClassifier(n_estimators = 150, random_state = 2020)
+clf.fit(X_train, y_train)
+perm = PermutationImportance(clf, random_state = 2010)
+perm.fit(X_test, y_test)
+# Store feature weights in an object
+html_obj = eli5.show_weights(perm, feature_names = X_list)
+# Write html object to a file (adjust file path; Windows path is used here)
+with open(r'C:\Users\lukem\Desktop\Github AI Projects\Higgs-Boson-machine-learning-challenge\boson-importance.htm','wb') as f:
+    f.write(html_obj.data.encode("UTF-8"))
     
 lr = LogisticRegression()
 lr.fit(X_train, y_train)
