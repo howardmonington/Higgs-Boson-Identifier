@@ -7,6 +7,7 @@ import xgboost as xgb
 from sklearn.preprocessing import normalize
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 
 train = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\training.csv')
 test = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\test.csv')
@@ -58,10 +59,9 @@ def xg_tester(estimators_to_test, X_train, X_test, y_train, y_test):
     mae = mean_absolute_error(y_test, pred)
     return(mae)
 
-mae_list = list()
+
 for i in estimators_to_test:
-    mae_list.append(xg_tester(i, X_train, X_test, y_train, y_test))
-    print(f"n_estimators: {i}, mae: {mae_list[-1]}")
+    print(f"n_estimators: {i}, mae: {xg_tester(i, X_train, X_test, y_train, y_test)}")
     
 lr = LogisticRegression()
 lr.fit(X_train, y_train)
@@ -69,3 +69,12 @@ pred = lr.predict(X_test)
 mae = mean_absolute_error(y_test, pred)
 print(f"logistic regression, mae: {mae}")
 
+def rf_tester(estimators_to_test, X_train, X_test, y_train, y_test):
+    rf = RandomForestClassifier(n_estimators = estimators_to_test, random_state = 2020)
+    rf.fit(X_train, y_train)
+    pred = clf.predict(X_test)
+    mae = mean_absolute_error(y_test, pred)
+    return(mae)
+
+for i in estimators_to_test:
+    print(f"n_estimators: {i}, mae: {rf_tester(i, X_train, X_test, y_train, y_test)}")
