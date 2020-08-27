@@ -16,9 +16,12 @@ train = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai comp
 test = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\test.csv')
 sample_submission = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\random_submission.csv')
 
-dict = {'s':0,'b':1}
-train['Label'] = train['Label'].map(dict)
-y = train.Label
+# Here is one way to set up the y value
+#dict = {'s':0,'b':1}
+#train['Label'] = train['Label'].map(dict)
+#y = train.Label
+
+y = (train['Label'] == 'b')
 train = train.drop(['Label', 'Weight'], axis = 1)
 
 
