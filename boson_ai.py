@@ -11,17 +11,22 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import mean_absolute_error
 import eli5
 from eli5.sklearn import PermutationImportance
+from sklearn import tree
+import graphviz
+from sklearn.tree import DecisionTreeClassifier
+import pydotplus
 
 train = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\training.csv')
 test = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\test.csv')
 sample_submission = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\random_submission.csv')
 
 # Here is one way to set up the y value
-#dict = {'s':0,'b':1}
-#train['Label'] = train['Label'].map(dict)
-#y = train.Label
+dict = {'s':0,'b':1}
+train['Label'] = train['Label'].map(dict)
+y = train.Label
 
-y = (train['Label'] == 'b')
+# Here is another way of encoding the y value to be binary (True/False)
+#y = (train['Label'] == 'b')
 train = train.drop(['Label', 'Weight'], axis = 1)
 
 
@@ -51,10 +56,21 @@ test.EventId = test.EventId.astype('int32')
 X.set_index('EventId', inplace = True)
 test.set_index('EventId', inplace = True)
 
+X_cols2, test_cols2 = X.columns, test.columns
+
 X = pd.DataFrame(normalize(X))
 test = pd.DataFrame(normalize(test))
 
+X.columns = X_cols2
+test.columns = test_cols2
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=2020)
+
+
+#trying out graphviz in trees
+tree_model = DecisionTreeClassifier(random_state=0, max_depth=5, min_samples_split=5).fit(X_train, y_train)
+tree_graph = tree.export_graphviz(tree_model, out_file=None, feature_names=X_cols2)
+graphviz.Source(tree_graph)
 
 estimators_to_test = [50, 100, 150, 200]
 
