@@ -12,9 +12,9 @@ from sklearn.metrics import mean_absolute_error
 import eli5
 from eli5.sklearn import PermutationImportance
 from sklearn import tree
-import graphviz
+#import graphviz
 from sklearn.tree import DecisionTreeClassifier
-import pydotplus
+#import pydotplus
 
 train = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\training.csv')
 test = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\test.csv')
@@ -69,8 +69,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random
 
 #trying out graphviz in trees
 tree_model = DecisionTreeClassifier(random_state=0, max_depth=5, min_samples_split=5).fit(X_train, y_train)
-tree_graph = tree.export_graphviz(tree_model, out_file=None, feature_names=X_cols2)
-graphviz.Source(tree_graph)
+#tree_graph = tree.export_graphviz(tree_model, out_file=None, feature_names=X_cols2)
+#graphviz.Source(tree_graph)
 
 estimators_to_test = [50, 100, 150, 200]
 
@@ -85,6 +85,10 @@ def xg_tester(estimators_to_test, X_train, X_test, y_train, y_test):
 for i in estimators_to_test:
     print(f"n_estimators: {i}, mae: {xg_tester(i, X_train, X_test, y_train, y_test)}")
     
+# Another way to do the same for loop
+for i in estimators_to_test:
+    print("n_estimators: {}, mae {}".format(i,xg_tester(i, X_train, X_test, y_train, y_test)))
+
 
 X_list = X_test.columns.tolist()
 
