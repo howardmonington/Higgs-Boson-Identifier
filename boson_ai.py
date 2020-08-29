@@ -15,6 +15,7 @@ from sklearn import tree
 #import graphviz
 from sklearn.tree import DecisionTreeClassifier
 #import pydotplus
+from sklearn.metrics import confusion_matrix
 
 train = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\training.csv')
 test = pd.read_csv(r'C:\Users\lukem\Desktop\Github AI Projects\Data for ai competitions\higgs boson ml challenge\test.csv')
@@ -88,6 +89,20 @@ for i in estimators_to_test:
 # Another way to do the same for loop
 for i in estimators_to_test:
     print("n_estimators: {}, mae {}".format(i,xg_tester(i, X_train, X_test, y_train, y_test)))
+
+
+clf = xgb.XGBClassifier(n_estimators = 150, random_state = 2020)
+clf.fit(X_train, y_train)
+y_pred = clf.predict(X_test)
+cm = confusion_matrix(y_test, y_pred)
+print("True positives: {}\nFalse positives: {}".format(cm[0,0],cm[0,1]))
+print("True negatives: {}\nFalse negatives: {}".format(cm[1,1],cm[1,0]))
+
+# visualize confusion matrix with seaborn heatmap
+cm_matrix = pd.DataFrame(data=cm, columns=['Actual Positive:1', 'Actual Negative:0'], 
+                                 index=['Predict Positive:1', 'Predict Negative:0'])
+sns.heatmap(cm_matrix, annot=True, fmt='d', cmap='YlGnBu')
+
 
 
 X_list = X_test.columns.tolist()
